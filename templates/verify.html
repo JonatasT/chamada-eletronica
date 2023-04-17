@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>RSVP - Chamada eletronica - Verify</title>
+</head>
+<body>
+	<h1>Verificação</h1>
+	<p>Um e-mail com o link de verificação foi enviado para {{ session.get('email') }}. Insira o código recebido abaixo:</p>
+	<form method="POST">
+		<label for="verification_code">Código de verificação:</label>
+		<input type="text" id="verification_code" name="verification_code" required>
+		<button type="submit">Enviar</button>
+	</form>
+</body>
+</html>
