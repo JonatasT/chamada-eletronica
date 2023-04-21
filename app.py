@@ -1,18 +1,41 @@
 from flask import Flask, render_template, request, redirect, url_for, session
+#from auth0.v3.authentication import GetToken
 from auth0.v3.authentication import GetToken
 from auth0.v3.management import Auth0
+from authlib.integrations.flask_client import OAuth
+from dotenv import find_dotenv, load_dotenv
 from config import Config
 import os
 
 
 app = Flask(__name__)
+app.secret_key = os.environ.get("APP_SECRET_KEY")
 app.config.from_object(Config)
+
+ENV_FILE = find_dotenv()
+if ENV_FILE:
+    load_dotenv(ENV_FILE)
+
 #app.secret_key = os.environ.get("FLASK_SECRET_KEY")
 
 auth0_domain = os.environ.get("AUTH0_DOMAIN")
 auth0_client_id = os.environ.get("AUTH0_CLIENT_ID")
 auth0_client_secret = os.environ.get("AUTH0_CLIENT_SECRET")
 auth0_audience = f"https://{auth0_domain}/api/v2/"
+
+"""oauth = OAuth(app)
+
+oauth.register(
+    "auth0",
+    client_id=os.environ.get("AUTH0_CLIENT_ID"),
+    client_secret=os.environ.get("AUTH0_CLIENT_SECRET"),
+    client_kwargs={
+        "scope": "openid profile email",
+    },
+    server_metadata_url=f'https://{os.environ.get("AUTH0_DOMAIN")}/.well-known/openid-configuration'
+)
+"""
+
 
 get_token = GetToken(auth0_domain)
 token = get_token.client_credentials(auth0_client_id,
@@ -28,6 +51,7 @@ def home():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    
     if request.method == 'POST':
         email = request.form['email']
         auth0.passwordless_start(
